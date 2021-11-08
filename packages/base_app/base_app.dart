@@ -1,0 +1,1 @@
+export 'lib/base_app.dart';

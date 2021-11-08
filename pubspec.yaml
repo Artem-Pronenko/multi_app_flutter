@@ -1,0 +1,55 @@
+name: multi_app_flutter
+description: multi_app_flutter
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  base_app:
+    path: packages/base_app
+  flutter_flavorizr: ^2.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+  flutter_bloc: ^7.3.1
+
+flutter:
+
+  uses-material-design: true
+
+#flavorizr:
+#  app:
+#    android:
+#      flavorDimensions: "flavor-type"
+#    ios:
+#
+#  flavors:
+#    development:
+#      app:
+#        name: "[DEV]Multi App"
+#
+#      android:
+#        applicationId: "com.multi_app_flutter.dev"
+#      ios:
+#        bundleId: "com.multi_app_flutter.dev"
+#        schema: "development"
+#
+#    production:
+#      app:
+#        name: "Multi App"
+#
+#      android:
+#        applicationId: "com.multi_app_flutter"
+#      ios:
+#        bundleId: "com.multi_app_flutter"
+#        schema: "production"
