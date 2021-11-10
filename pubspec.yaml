@@ -14,7 +14,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   base_app:
     path: packages/base_app
-  flutter_flavorizr: ^2.0.0
+  flavor_config:
+    path: packages/flavor_config
 
 
 dev_dependencies:

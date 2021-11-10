@@ -1,4 +1,5 @@
 import 'package:base_app/screens/screens.dart';
+import 'package:flavor_config/config/flavor_config.dart';
 import 'package:flutter/material.dart';
 import 'package:logic_repository/logic_repository.dart';
 
@@ -26,7 +27,7 @@ class _FirstScreenState extends State<FirstScreen> {
         }),
         child: Text(widget.logicRepository.getLogic.toString()),
       ),
-      appBar: AppBar(title: const Text('BaseApp First Screen')),
+      appBar: AppBar(title: Text(FlavorConfig.instance?.values.nameApp ?? 'BaseApp First Screen')),
       body: SafeArea(
         child: Center(
           child: TextButton(

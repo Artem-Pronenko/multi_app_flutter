@@ -1,4 +1,5 @@
 import 'package:base_app/screens/screens.dart';
+import 'package:flavor_config/flavor_config.dart';
 import 'package:flutter/material.dart';
 
 class SecondScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BaseApp Second Screen')),
+      appBar: AppBar(title: Text(FlavorConfig.instance?.values.nameApp ?? 'BaseApp First Screen')),
       body: SafeArea(
         child: Center(
           child: TextButton(

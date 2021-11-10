@@ -14,6 +14,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   logic_repository:
     path: ../logic_repositiry
+  flavor_config:
+    path: ../flavor_config
 
 dev_dependencies:
   flutter_test:
