@@ -1,0 +1,10 @@
+{
+  "firstApp": {
+    "desc": "11",
+    "image_path": "assets/app_icons/app_icon_first.png"
+  },
+  "secondApp": {
+    "desc": "22",
+    "image_path": "assets/app_icons/app_icon_second.png"
+  }
+}

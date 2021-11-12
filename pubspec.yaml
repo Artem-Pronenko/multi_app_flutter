@@ -22,35 +22,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
-  flutter_bloc: ^7.3.1
+  flutter_launcher_icons: ^0.9.2
 
 flutter:
 
   uses-material-design: true
-
-#flavorizr:
-#  app:
-#    android:
-#      flavorDimensions: "flavor-type"
-#    ios:
-#
-#  flavors:
-#    development:
-#      app:
-#        name: "[DEV]Multi App"
-#
-#      android:
-#        applicationId: "com.multi_app_flutter.dev"
-#      ios:
-#        bundleId: "com.multi_app_flutter.dev"
-#        schema: "development"
-#
-#    production:
-#      app:
-#        name: "Multi App"
-#
-#      android:
-#        applicationId: "com.multi_app_flutter"
-#      ios:
-#        bundleId: "com.multi_app_flutter"
-#        schema: "production"
