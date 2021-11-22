@@ -1,10 +1,20 @@
 {
-  "firstApp": {
+  "first_app": {
+    "fullAppName": "First App",
     "desc": "11",
-    "image_path": "assets/app_icons/app_icon_first.png"
+    "image_path": "assets/app_icons/app_icon_first.png",
+    "applicationId": "com.multi_app_flutter.multi_app_flutter.firstApp"
   },
-  "secondApp": {
+  "second_app": {
+    "fullAppName": "Second App",
     "desc": "22",
-    "image_path": "assets/app_icons/app_icon_second.png"
+    "image_path": "assets/app_icons/app_icon_second.png",
+    "applicationId": "com.multi_app_flutter.multi_app_flutter.secondApp"
+  },
+  "third_app": {
+    "fullAppName": "Third App",
+    "desc": "22",
+    "image_path": "assets/app_icons/app_icon_second.png",
+    "applicationId": "com.multi_app_flutter.multi_app_flutter.thirdApp"
   }
 }
