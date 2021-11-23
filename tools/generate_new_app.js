@@ -11,12 +11,24 @@ const entryPointAppsDirPath = `${path.resolve(__dirname, '../lib/apps')}`;
 
 const main = () => {
   if (!configName) throw 'Config file name not passed';
-  if (!projectName) throw 'Project name file not passed';
 
   const configPath = `${path.resolve(__dirname)}/${configName}`;
   const configDateJson = JSON.parse(getFileData(configPath).toString());
   const [appIdName, appConfig] = getAppConfig(configDateJson, projectName);
 
+  if (!projectName) {
+    for (const appName in configDateJson) {
+      createAppDirInAndroid(appName, configDateJson[appName]);
+      createEntryInConfig(appName, configDateJson[appName]);
+      createFlavorConfigInPackages(appName, configDateJson[appName]);
+    }
+    return;
+  }
+
+  if (!appConfig) {
+    console.error('Application config not found in config file');
+    return;
+  }
 
   createAppDirInAndroid(appIdName, appConfig);
   createEntryInConfig(appIdName, appConfig);
@@ -38,7 +50,7 @@ const createEntryInConfig = (appIdName, appConfig) => {
   const fileData = getFileData(`${rootDirPath}/android/app/build.gradle`);
 
   if (fileData.indexOf(appIdName) !== -1) {
-    console.error('This flavor already exists in the build.gradle file');
+    console.warn(`${appIdName} flavor already exists in the build.gradle file`);
   } else {
     const flavorConfigAppData = generateFlavorConfigAppForGradle(fileData, appIdName, appConfig);
     writeFile(`${rootDirPath}/android/app/build.gradle`, flavorConfigAppData);
@@ -46,15 +58,23 @@ const createEntryInConfig = (appIdName, appConfig) => {
 };
 
 // Creating a default flavor config in the package
+// Creating a default main entry point file
 const createFlavorConfigInPackages = (appIdName, appConfig) => {
   const flavorConfigFileName = `flavor_${appIdName}.dart`;
   const flavorConfigExportsFilePath = `${flavorConfigPath}/lib/flavor_config.dart`;
+  const flavorConfigFilePath = `${flavorConfigPath}/lib/config/${flavorConfigFileName}`;
+  const mainEntryPointFilePath = `${entryPointAppsDirPath}/main_${appIdName}.dart`;
 
-  writeFile(`${flavorConfigPath}/lib/config/${flavorConfigFileName}`, generateFlavorConfigDart(appIdName, appConfig));
-  writeFile(`${entryPointAppsDirPath}/main_${appIdName}.dart`, generateEntryPointAppDart(`env${appIdName}`));
+  if (fs.existsSync(flavorConfigFilePath)) {
+    writeFile(flavorConfigFilePath, generateFlavorConfigDart(appIdName, appConfig));
+  }
+
+  if (fs.existsSync(mainEntryPointFilePath)) {
+    writeFile(mainEntryPointFilePath, generateEntryPointAppDart(`env${appIdName}`));
+  }
 
   if (getFileData(flavorConfigExportsFilePath).indexOf(flavorConfigFileName) !== -1) {
-    console.error('This file is already being imported into flavor_config.dart');
+    console.warn(`${flavorConfigFileName} file is already being imported into flavor_config.dart`);
     return;
   }
   fs.appendFileSync(flavorConfigExportsFilePath, `\nexport 'config/${flavorConfigFileName}';`);

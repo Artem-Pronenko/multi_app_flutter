@@ -63,18 +63,6 @@ android {
     flavorDimensions "flavor-type"
 
     productFlavors {
-        firstapp {
-            dimension "flavor-type"
-            applicationId "com.multi_app_flutter.multi_app_flutter.firstApp"
-            versionCode 1
-            versionName "1.0"
-        }
-        secondapp {
-            dimension "flavor-type"
-            applicationId "com.multi_app_flutter.multi_app_flutter.secondApp"
-            versionCode 1
-            versionName "1.0"
-        }
     }
 
 }

@@ -35,7 +35,6 @@ const getAppConfig = (json, appName) => {
       return [key, json[key]];
     }
   }
-  console.error('Application name not found in config file');
   return [];
 };
 
