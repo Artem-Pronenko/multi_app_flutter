@@ -5,12 +5,12 @@
 2. Add new app config to the file you just created. 
 ```
 Example
-  "first_app": {
+"first_app": {
   "fullAppName": "First App",
   "desc": "desc",
   "image_path": "assets/app_icons/app_icon_first.png",
   "applicationId": "com.multi_app_flutter.multi_app_flutter.firstApp"
-  },
+}
 ```
 
 ### Creating a new app

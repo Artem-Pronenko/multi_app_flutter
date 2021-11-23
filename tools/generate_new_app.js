@@ -65,11 +65,11 @@ const createFlavorConfigInPackages = (appIdName, appConfig) => {
   const flavorConfigFilePath = `${flavorConfigPath}/lib/config/${flavorConfigFileName}`;
   const mainEntryPointFilePath = `${entryPointAppsDirPath}/main_${appIdName}.dart`;
 
-  if (fs.existsSync(flavorConfigFilePath)) {
+  if (!fs.existsSync(flavorConfigFilePath)) {
     writeFile(flavorConfigFilePath, generateFlavorConfigDart(appIdName, appConfig));
   }
 
-  if (fs.existsSync(mainEntryPointFilePath)) {
+  if (!fs.existsSync(mainEntryPointFilePath)) {
     writeFile(mainEntryPointFilePath, generateEntryPointAppDart(`env${appIdName}`));
   }
 
@@ -77,7 +77,7 @@ const createFlavorConfigInPackages = (appIdName, appConfig) => {
     console.warn(`${flavorConfigFileName} file is already being imported into flavor_config.dart`);
     return;
   }
-  fs.appendFileSync(flavorConfigExportsFilePath, `\nexport 'config/${flavorConfigFileName}';`);
+  fs.appendFileSync(flavorConfigExportsFilePath, `export 'config/${flavorConfigFileName}';`);
 
 };
 
