@@ -9,10 +9,10 @@ const main = () => {
     throw 'Config file name not passed';
   }
   let appName = null;
-  const configPath = `${path.resolve(__dirname)}/${configName}`;
-  const rootDirPath = `${path.resolve(__dirname, '../')}`;
+  const configPath = path.resolve(__dirname, configName);
+  const rootDirPath = `${path.resolve(__dirname, '..')}`;
 
-  const configDateJson = JSON.parse(getFileData(configPath));
+  const configDateJson = JSON.parse(getFileData(configPath).toString());
   for (const key in configDateJson) {
     if (!configDateJson.hasOwnProperty(key)) {
       return;
@@ -21,7 +21,7 @@ const main = () => {
     const image_path = configDateJson[key]['image_path'];
     writeFile(`${rootDirPath}/${FLUTTER_LAUNCHER_ICONS}-${appName}.yaml`, generateIconYamlConfig(image_path));
   }
-  cp.execSync(`cd ../ && flutter pub run ${FLUTTER_LAUNCHER_ICONS}:main -f ${FLUTTER_LAUNCHER_ICONS}-${appName}.yaml`);
+  cp.execSync(`cd .. && flutter pub run ${FLUTTER_LAUNCHER_ICONS}:main -f ${FLUTTER_LAUNCHER_ICONS}-${appName}.yaml`);
 
   for (const key in configDateJson) {
     if (!configDateJson.hasOwnProperty(key)) {
