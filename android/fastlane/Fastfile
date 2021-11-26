@@ -1,18 +1,4 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-    print("test ---- -- -- -")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-  end
-
 end

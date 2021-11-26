@@ -16,16 +16,16 @@ or alternatively using `brew install fastlane`
 
 # Available Actions
 ## Android
-### android test
+### android beta_android
 ```
-fastlane android test
-```
-Runs all the tests
-### android beta
-```
-fastlane android beta
+fastlane android beta_android
 ```
 Submit a new Beta Build to Crashlytics Beta
+### android deploy
+```
+fastlane android deploy
+```
+Deploy a new version to the Google Play
 
 ----
 

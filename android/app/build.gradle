@@ -65,6 +65,11 @@ android {
     productFlavors {
     }
 
+    lintOptions {
+        disable 'InvalidPackage'
+        checkReleaseBuilds false  // Upgrading gradle build tools seems to break some lints.
+    }
+
 }
 
 flutter {
