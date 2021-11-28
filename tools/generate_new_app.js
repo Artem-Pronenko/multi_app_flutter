@@ -1,26 +1,21 @@
 const fs = require('fs');
 const path = require('path');
-const {getFileData, getAppConfig, writeFile, mkdir} = require('./core');
-const configName = process.argv[2]?.trim();
-const projectName = process.argv[3]?.trim();
+const {getFileData, getAppConfig, writeFile, mkdir, getConfigDataJson} = require('./core');
+const {rootDirPath, DIR_NAMES} = require('./constant');
+const projectName = process.argv[2]?.trim();
 
-
-const rootDirPath = path.resolve(__dirname, '..');
-const flavorConfigPath = path.resolve(__dirname, '..', 'packages', 'flavor_config');
-const entryPointAppsDirPath = path.resolve(__dirname, '..', 'lib', 'apps');
+const flavorConfigPath = path.resolve(__dirname, '..', DIR_NAMES.packages, DIR_NAMES.flavor_config);
+const entryPointAppsDirPath = path.resolve(__dirname, '..', DIR_NAMES.lib, DIR_NAMES.apps);
 
 const main = () => {
-  if (!configName) throw 'Config file name not passed';
-
-  const configPath = path.resolve(__dirname, configName);
-  const configDateJson = JSON.parse(getFileData(configPath).toString());
-  const [appIdName, appConfig] = getAppConfig(configDateJson, projectName);
+  const configDataJson = getConfigDataJson();
+  const [appIdName, appConfig] = getAppConfig(configDataJson, projectName);
 
   if (!projectName) {
-    for (const appName in configDateJson) {
-      createAppDirInAndroid(appName, configDateJson[appName]);
-      createEntryInConfig(appName, configDateJson[appName]);
-      createFlavorConfigInPackages(appName, configDateJson[appName]);
+    for (const appName in configDataJson) {
+      createAppDirInAndroid(appName, configDataJson[appName]);
+      createEntryInConfig(appName, configDataJson[appName]);
+      createFlavorConfigInPackages(appName, configDataJson[appName]);
     }
     return;
   }
@@ -38,22 +33,25 @@ const main = () => {
 
 // Creating an application directory in android/app/src
 const createAppDirInAndroid = (appIdName, appConfig) => {
-  const newAppDir = path.join(rootDirPath, 'android', 'app', 'src', appIdName);
-  mkdir(path.join(newAppDir, 'res', 'values'));
-  writeFile(path.join(newAppDir, 'res', 'values', 'strings.xml'), generateStringsXml(appConfig['fullAppName']));
+  const newAppDir = path.join(rootDirPath, DIR_NAMES.android, DIR_NAMES.app, DIR_NAMES.src, appIdName);
+  mkdir(path.join(newAppDir, DIR_NAMES.res, DIR_NAMES.values));
+  writeFile(
+    path.join(newAppDir, DIR_NAMES.res, DIR_NAMES.values, DIR_NAMES.strings_xml),
+    generateStringsXml(appConfig['fullAppName'])
+  );
 };
 
 
 // Creating a flavor config entry in the build.gradle file
 const createEntryInConfig = (appIdName, appConfig) => {
   // todo make it possible to overwrite flavor
-  const fileData = getFileData(path.join(rootDirPath, 'android', 'app', 'build.gradle'));
+  const fileData = getFileData(path.join(rootDirPath, DIR_NAMES.android, DIR_NAMES.app, DIR_NAMES.build_gradle));
 
   if (fileData.indexOf(appIdName) !== -1) {
-    console.warn(`${appIdName} flavor already exists in the build.gradle file`);
+    console.warn(`${appIdName} flavor already exists in the ${DIR_NAMES.build_gradle} file`);
   } else {
     const flavorConfigAppData = generateFlavorConfigAppForGradle(fileData, appIdName, appConfig);
-    writeFile(path.join(rootDirPath, 'android', 'app', 'build.gradle'), flavorConfigAppData);
+    writeFile(path.join(rootDirPath, DIR_NAMES.android, DIR_NAMES.app, DIR_NAMES.build_gradle), flavorConfigAppData);
   }
 };
 
@@ -61,8 +59,8 @@ const createEntryInConfig = (appIdName, appConfig) => {
 // Creating a default main entry point file
 const createFlavorConfigInPackages = (appIdName, appConfig) => {
   const flavorConfigFileName = `flavor_${appIdName}.dart`;
-  const flavorConfigExportsFilePath = path.join(flavorConfigPath, 'lib', 'flavor_config.dart');
-  const flavorConfigFilePath = path.join(flavorConfigPath, 'lib', 'config', flavorConfigFileName);
+  const flavorConfigExportsFilePath = path.join(flavorConfigPath, DIR_NAMES.lib, DIR_NAMES.flavor_config_dart);
+  const flavorConfigFilePath = path.join(flavorConfigPath, DIR_NAMES.lib, DIR_NAMES.config, flavorConfigFileName);
   const mainEntryPointFilePath = path.join(entryPointAppsDirPath, `main_${appIdName}.dart`);
 
   if (!fs.existsSync(flavorConfigFilePath)) {

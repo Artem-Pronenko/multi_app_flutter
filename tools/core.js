@@ -1,4 +1,16 @@
 const fs = require('fs');
+const {configFilePath, configFileName} = require('./constant');
+
+
+const getConfigDataJson = () => {
+  try {
+    if (fs.existsSync(configFilePath)) {
+      return JSON.parse(getFileData(configFilePath).toString());
+    }
+  } catch (err) {
+    throw `Config file named ${configFileName} was not found in the tools directory`;
+  }
+};
 
 const getFileData = (path) => {
   try {
@@ -39,6 +51,7 @@ const getAppConfig = (json, appName) => {
 };
 
 module.exports = {
+  getConfigDataJson,
   getFileData,
   writeFile,
   mkdir,

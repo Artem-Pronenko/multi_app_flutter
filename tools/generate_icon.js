@@ -1,57 +1,38 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const configName = process.argv[2]?.trim();
-const FLUTTER_LAUNCHER_ICONS = 'flutter_launcher_icons';
+const {rootDirPath, DIR_NAMES} = require('./constant');
+const {writeFile, getConfigDataJson} = require('./core');
 
+//
+// generate_icon.js is not needed in the name of the application for which you need to create an icon,
+// since the flutter_launcher_icons plugin generates icons for all app that are indicated in the flavors
 const main = () => {
-  if (!configName) {
-    throw 'Config file name not passed';
-  }
   let appName = null;
-  const configPath = path.resolve(__dirname, configName);
-  const rootDirPath = `${path.resolve(__dirname, '..')}`;
 
-  const configDateJson = JSON.parse(getFileData(configPath).toString());
+  const configDateJson = getConfigDataJson();
   for (const key in configDateJson) {
     if (!configDateJson.hasOwnProperty(key)) {
       return;
     }
     appName = key;
     const image_path = configDateJson[key]['image_path'];
-    writeFile(`${rootDirPath}/${FLUTTER_LAUNCHER_ICONS}-${appName}.yaml`, generateIconYamlConfig(image_path));
+    writeFile(path.join(rootDirPath, `${DIR_NAMES.flutter_launcher_icons}-${appName}.yaml`), generateIconYamlConfig(image_path));
   }
-  cp.execSync(`cd .. && flutter pub run ${FLUTTER_LAUNCHER_ICONS}:main -f ${FLUTTER_LAUNCHER_ICONS}-${appName}.yaml`);
+  cp.execSync(`cd .. && flutter pub run ${DIR_NAMES.flutter_launcher_icons}:main -f ${DIR_NAMES.flutter_launcher_icons}-${appName}.yaml`);
 
   for (const key in configDateJson) {
     if (!configDateJson.hasOwnProperty(key)) {
       return;
     }
-    fs.unlink(`${rootDirPath}/${FLUTTER_LAUNCHER_ICONS}-${key}.yaml`, (err => {
+    fs.unlink(path.join(rootDirPath, `${DIR_NAMES.flutter_launcher_icons}-${key}.yaml`), (err => {
       if (err) {
         console.error(err);
       }
 
-    }))
+    }));
   }
 
-};
-
-
-const getFileData = (path) => {
-  try {
-    return fs.readFileSync(path, 'utf-8');
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-const writeFile = (path, data,) => {
-  try {
-    fs.writeFileSync(path, data);
-  } catch (err) {
-    console.error(err);
-  }
 };
 
 const generateIconYamlConfig = (image_path) => {

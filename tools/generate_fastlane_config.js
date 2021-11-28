@@ -1,20 +1,28 @@
 const path = require('path');
-const {getFileData, getAppConfig, writeFile} = require('./core');
-const configName = process.argv[2]?.trim();
-const projectName = process.argv[3]?.trim();
-
-
-const rootDirPath = path.resolve(__dirname, '..');
+const {getFileData, getAppConfig, writeFile, getConfigDataJson} = require('./core');
+const {rootDirPath, DIR_NAMES} = require('./constant');
+const projectName = process.argv[2]?.trim();
 
 const main = () => {
-  const fastlaneFilePath = path.join(rootDirPath, 'android', 'fastlane', 'Fastfile');
+  const fastlaneFilePath = path.join(rootDirPath, DIR_NAMES.android, DIR_NAMES.fastlane, DIR_NAMES.Fastfile);
   const fileData = getFileData(fastlaneFilePath);
 
-  const configPath = path.resolve(__dirname, configName);
-  const configDateJson = JSON.parse(getFileData(configPath).toString());
-  const [appIdName, configApp] = getAppConfig(configDateJson, projectName);
-  writeFile(fastlaneFilePath, generateFastlaneConfig(fileData, appIdName, configApp));
+  const configDataJson = getConfigDataJson();
+  const [appIdName] = getAppConfig(configDataJson, projectName);
 
+  if (!projectName) {
+    for (const appName in configDataJson) writeFile(fastlaneFilePath, generateFastlaneConfig(fileData, appName));
+    return;
+  }
+  createFastlaneConfigInFastFile(fastlaneFilePath, fileData, appIdName);
+};
+
+const createFastlaneConfigInFastFile = (fastlaneFilePath, fileData, appIdName) => {
+  if (fileData.indexOf(appIdName) !== -1) {
+    console.warn(`Fastlane config for ${appIdName} already exists`);
+    return;
+  }
+  writeFile(fastlaneFilePath, generateFastlaneConfig(fileData, appIdName));
 };
 
 
