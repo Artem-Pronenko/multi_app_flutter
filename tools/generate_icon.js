@@ -1,13 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const {rootDirPath, DIR_NAMES} = require('./constant');
+const {rootDirPath, DIR_NAMES, CONSOLE_PROGRESS_MESSAGES} = require('./constant');
 const {writeFile, getConfigDataJson} = require('./core');
 
 //
 // generate_icon.js is not needed in the name of the application for which you need to create an icon,
 // since the flutter_launcher_icons plugin generates icons for all app that are indicated in the flavors
 const main = () => {
+  console.log(CONSOLE_PROGRESS_MESSAGES.GENERATE_APP_ICONS);
   let appName = null;
 
   const configDateJson = getConfigDataJson();
@@ -32,6 +33,7 @@ const main = () => {
 
     }));
   }
+  console.log(CONSOLE_PROGRESS_MESSAGES.GENERATE_APP_ICONS_FINISHED);
 
 };
 

@@ -1,13 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const {getFileData, getAppConfig, writeFile, mkdir, getConfigDataJson} = require('./core');
-const {rootDirPath, DIR_NAMES} = require('./constant');
+const {rootDirPath, DIR_NAMES, CONSOLE_PROGRESS_MESSAGES} = require('./constant');
 const projectName = process.argv[2]?.trim();
 
 const flavorConfigPath = path.resolve(__dirname, '..', DIR_NAMES.packages, DIR_NAMES.flavor_config);
 const entryPointAppsDirPath = path.resolve(__dirname, '..', DIR_NAMES.lib, DIR_NAMES.apps);
 
 const main = () => {
+  console.log(CONSOLE_PROGRESS_MESSAGES.GENERATE_APP_FILES);
   const configDataJson = getConfigDataJson();
   const [appIdName, appConfig] = getAppConfig(configDataJson, projectName);
 
@@ -28,6 +29,7 @@ const main = () => {
   createAppDirInAndroid(appIdName, appConfig);
   createEntryInConfig(appIdName, appConfig);
   createFlavorConfigInPackages(appIdName, appConfig);
+  console.log(CONSOLE_PROGRESS_MESSAGES.GENERATE_APP_FILES_FINISHED);
 };
 
 
@@ -87,6 +89,8 @@ const generateFlavorConfigAppForGradle = (fileData, appIdName, appConfig) => {
         ${appIdName} {
             dimension "flavor-type"
             applicationId "${appConfig['applicationId']}"
+            versionNameSuffix "-dev"
+            signingConfig signingConfigs.release
         }
     `
   );
@@ -97,12 +101,25 @@ const generateFlavorConfigDart = (appNameId, appConfig) => {
 
 final env${appNameId} = FlavorValues(
     nameApp: '${appConfig['fullAppName']}',
+    ${generateFlavorConfig(appConfig)}
 );`;
+};
+
+
+const generateFlavorConfig = (appConfig) => {
+  const appSettings = appConfig['appSettings'];
+  let config = '';
+  for (const key in appSettings) {
+    config += `${key}: "${appSettings[key]}",
+    `;
+  }
+  return config;
+
 };
 
 const generateEntryPointAppDart = (appNameId) => {
   return `import 'package:flavor_config/flavor_config.dart';
-import 'package:multi_app_flutter/main_common.dart';
+import 'package:rapidone/main_common.dart';
 
 void main() {
   mainCommon(

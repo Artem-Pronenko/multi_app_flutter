@@ -1,20 +1,24 @@
 {
-  "first_app": {
-    "fullAppName": "First App",
-    "desc": "11",
+  "base_app": {
+    "fullAppName": "[DEV]Base App",
+    "desc": "Main codebase app",
     "image_path": "assets/app_icons/app_icon_first.png",
-    "applicationId": "com.multi_app_flutter.multi_app_flutter.firstApp"
+    "applicationId": "com.multi_app_flutter.multi_app_flutter.firstApp",
+    "firebase_app_android_id": "",
+    "tester_group": "artem",
+    "appSettings": {
+      "baseApiUrl": "https://..."
+    }
   },
   "second_app": {
-    "fullAppName": "Second App",
-    "desc": "22",
+    "fullAppName": "[DEV]Second App",
+    "desc": "second app",
     "image_path": "assets/app_icons/app_icon_second.png",
-    "applicationId": "com.multi_app_flutter.multi_app_flutter.secondApp"
-  },
-  "third_app": {
-    "fullAppName": "Third App",
-    "desc": "22",
-    "image_path": "assets/app_icons/app_icon_second.png",
-    "applicationId": "com.multi_app_flutter.multi_app_flutter.thirdApp"
+    "applicationId": "com.multi_app_flutter.multi_app_flutter.secondApp",
+    "firebase_app_android_id": "",
+    "tester_group": "artem",
+    "appSettings": {
+      "baseApiUrl": "https://..."
+    }
   }
 }

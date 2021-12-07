@@ -1,7 +1,6 @@
 const cp = require('child_process');
 const {getConfigDataJson} = require('./core');
-const path = require('path');
-const {rootDirPath, SCRIPT_TYPES, DIR_NAMES, BUILD_TYPES} = require('./constant');
+const {SCRIPT_TYPES, BUILD_TYPES, CONSOLE_PROGRESS_MESSAGES} = require('./constant');
 const scriptCommandArgs = process.argv[2]?.trim();
 const projectName = process.argv[3]?.trim();
 
@@ -25,11 +24,11 @@ const main = () => {
         console.error(`Specify a specific app name id to run ${SCRIPT_TYPES.GENERATE_APP}.`);
         return;
       }
-      generateApp();
+      generateApp({projectName: projectName, buildType});
       break;
     // Just generates codebase of projects from config.
     case SCRIPT_TYPES.GENERATE_ALL_APP:
-      generateApp();
+      generateApp({projectName: null, buildType});
       break;
     // Build just one app. Required projectName
     case SCRIPT_TYPES.BUILD_APP:
@@ -37,28 +36,56 @@ const main = () => {
         console.error(`Specify a specific app name id to run ${SCRIPT_TYPES.BUILD_APP}.`);
         return;
       }
-      generateApp();
-      cp.exec(`${path.join(rootDirPath, DIR_NAMES.android)} fastlane ${buildType}_${projectName}`);
+      generateApp({projectName: projectName, buildType});
+      buildApp(projectName);
+      unloadingAppToFirebase(buildType, projectName);
       break;
     // Build of all apps from config
     case SCRIPT_TYPES.BUILD_ALL_APP:
       const configDataJson = getConfigDataJson();
-      generateApp();
+      generateApp({projectName: null, buildType});
+      // todo async
       for (const appName in configDataJson) {
-        cp.exec(`${path.join(rootDirPath, DIR_NAMES.android)} fastlane ${buildType}_${appName}`);
+        buildApp(appName);
+        unloadingAppToFirebase(buildType, appName);
       }
       break;
   }
 };
 
+const buildApp = (projectName) => {
+  console.log(CONSOLE_PROGRESS_MESSAGES.BUILDING_APP);
+  try {
+    cp.execSync(`flutter build apk --flavor ${projectName} -t lib/apps/main_${projectName}.dart --release`);
+    console.log(CONSOLE_PROGRESS_MESSAGES.BUILDING_APP_FINISHED);
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
+const unloadingAppToFirebase = (buildType, projectName) => {
+  console.log(CONSOLE_PROGRESS_MESSAGES.UNLOADING_TO_FIREBASE);
+  try {
+    cp.execSync(`cd ../android && fastlane ${buildType}_${projectName}`);
+    console.log(CONSOLE_PROGRESS_MESSAGES.UNLOADING_TO_FIREBASE_FINISHED);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+
+const generateApp = ({projectName, buildType}) => {
+  cp.execSync(`node generate_new_app.js ${projectName ?? ''}`);
+  cp.exec('node generate_icon.js');
+  cp.execSync(`node generate_fastlane_config.js ${projectName ?? ''} ${buildType}`);
+};
+
+
 const isCorrectScriptArgs = () => {
   const stArr = Object.values(SCRIPT_TYPES);
   const btArr = Object.values(BUILD_TYPES);
   let isCorrect = false;
-
-  if (scriptCommandArgs === SCRIPT_TYPES.GENERATE_APP || scriptCommandArgs === SCRIPT_TYPES.GENERATE_ALL_APP) {
-    isCorrect = true;
-  }
 
   for (let i = 0; i < stArr.length; i++) {
     for (let j = 0; j < btArr.length; j++) {
@@ -68,12 +95,6 @@ const isCorrectScriptArgs = () => {
     }
   }
   return isCorrect;
-};
-
-const generateApp = (projectName) => {
-  cp.execSync(`node generate_new_app.js ${projectName ?? ''}`);
-  cp.exec('node generate_icon.js');
-  cp.execSync(`node generate_fastlane_config.js ${projectName ?? ''}`);
 };
 
 main();
